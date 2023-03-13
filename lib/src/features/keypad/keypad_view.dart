@@ -1,6 +1,7 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:softphone_flutter/src/util/appbar.dart';
+import 'package:softphone_flutter/src/features/keypad/keypad_presenter.dart';
+import 'package:softphone_flutter/src/features/keypad/keypad_contract.dart';
 
 class Keypad extends StatefulWidget {
   const Keypad({super.key});
@@ -10,17 +11,21 @@ class Keypad extends StatefulWidget {
   State<Keypad> createState() => _KeypadState();
 }
 
-class _KeypadState extends State<Keypad> {
+class _KeypadState extends State<Keypad> implements KeypadContract {
+  late KeypadPresenter _presenter;
   List<List<String>> keyList = [
     ['1', '2', '3'],
     ['4', '5', '6'],
     ['7', '8', '9'],
     ['*', '0', '#'],
   ];
-
+  _KeypadState() {
+    _presenter = KeypadPresenter(this);
+  }
   @override
   void initState() {
     super.initState();
+    _presenter = KeypadPresenter(this);
   }
 
   @override
@@ -37,11 +42,7 @@ class _KeypadState extends State<Keypad> {
             Expanded(
                 child: RawMaterialButton(
               onPressed: () {
-                if (int.parse(key) % 2 > 0) {
-                  AdaptiveTheme.of(context).setLight();
-                } else {
-                  AdaptiveTheme.of(context).setDark();
-                }
+                _presenter.onClickNumButton(context, key);
               },
               child: Center(
                   child: Text(key.toString(), textAlign: TextAlign.center)),
